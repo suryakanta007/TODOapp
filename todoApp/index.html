@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TODOAPP</title>
+    <link rel="stylesheet" href="./style.css" />
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      input {
+        margin-right: 2rem;
+        margin-top: 2rem;
+        border: none;
+      }
+      h1 {
+        font-size: 2.5rem;
+        text-align: center;
+      }
+      p {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 2rem;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main-container">
+      <h1>Todo List</h1>
+      <form>
+        <input type="text" id="inputField" />
+        <button class="btn">Add Todo</button>
+      </form>
+      <div class="todoListsElem">
+      </div>
+    </div>
+    <script>
+      const newTodo = document.querySelector("#inputField");
+      const addTodoBtn = document.querySelector(".btn");
+      const createTodo = document.querySelector(".todoListsElem");
+      let localTodoList = [];
+      const getTodoListFormLocal = ()=>{
+        return  JSON.parse(localStorage.getItem("YoutubeWork"))
+      };
+
+      const addTodoListLocalStorge = (localTodoList)=>{
+        return localStorage.setItem("YoutubeWork",JSON.stringify(localTodoList));
+      }
+
+      localTodoList = getTodoListFormLocal()||[];
+      const addTodoDynamicElement = (cuurEle)=>{
+       
+        let ele =  document.createElement('p');
+        ele.innerHTML = `<li>${cuurEle}</li><button class="deleteBtn">Delete</button>`
+        createTodo.appendChild(ele);
+        
+      }
+
+      const addTodo = () => {
+        const todoListValue = newTodo.value.trim();
+          newTodo.value = null;
+        if(todoListValue != "" &&!localTodoList.includes(todoListValue)){
+        localTodoList.push(todoListValue);
+        localTodoList = [...new Set(localTodoList)];
+        window.localStorage.setItem("YoutubeWork",JSON.stringify(localTodoList))
+        // console.log(localTodoList);
+      addTodoDynamicElement(todoListValue);
+        }
+      };
+      const showTodoList = ()=>{
+        console.log(localTodoList);
+        localTodoList.forEach((curEle)=>{
+          addTodoDynamicElement(curEle)
+        })
+      }
+      showTodoList();
+      const  removeTodoElement = (e)=>{
+        // console.log(e.target);
+        const todoRemove = e.target;
+        let todoListContent = todoRemove.previousElementSibling.innerText;
+        let parentEle = todoRemove.parentElement;
+        console.log(todoListContent);
+        localTodoList = localTodoList.filter((curTodo)=>{
+          return curTodo != todoListContent;
+        })
+        addTodoListLocalStorge (localTodoList);
+        console.log(parentEle);
+        parentEle.remove();
+      }
+      createTodo.addEventListener('click',(e)=>{
+        e.preventDefault();
+        if(e.target.classList.contains("deleteBtn")){
+        removeTodoElement(e);
+        }
+      })
+
+      addTodoBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        addTodo();
+      });
+      </script>
+  </body>
+</html>
